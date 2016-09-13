@@ -1,0 +1,351 @@
+---
+title: "HW2"
+author: "Prerana Ghosh"
+date: "13 September 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. 
+
+## Question 1:
+Most of the credit card comapnies face a regular problem in issuing credit cards to customers who fall short of paying their dues on time which leads to big loss for the credit card comapnies. In this paper, sample data of a credit card company based out of Taiwan was analysed to predict if a customer should be granted a credit card or not. 
+
+## Question 2:
+Using predictive analysis, the credit card company tries to predict whether a customer should be given a creditcard. The variables defined in the data set are The variables used for analysis were amount of given credit, gender, education, marital status, age, past payment history, bill statement and previous payment.
+There were six approaches used for prediction which are K-nearest neighbor qualifiers, logistic regression, discriminant analysis, Naïve Bayesian qualifier, artificial neural networks and classification trees.
+
+
+######################################################################################
+##Question 3:
+## Data Dictionary
+```{r kable}
+library(knitr)
+ID = "ID: observation ID"
+Y = "Y: default payment (Yes = 1, No = 0), as the response variable"
+X1_LIMIT_BAL = "X1_LIMIT_BAL: Amount of the given credit (NT dollar): it includes both the individual consumer credit and his/her family (supplementary) credit."
+X2_SEX = "X2_SEX: (1=Male;2=Female)"
+X3_EDUCATION = "X3_EDUCATION: (1=Graduate School, 2=University, 3=High School, 4=others)"
+X4_MARRAIGE = "X4_MARRAIGE: (1=Married; 2=Single, 3= Others)"
+X5_AGE = "X5_AGE: Age (Years)"
+X6_PAY_0 = "X6_PAY_0: The repayment status in September 2005 where 0=nodelay; -1=pay duly; 1=payment delay for one month; etc."
+X7_PAY_2 = "X6_PAY_0: The repayment status in August 2005 where 0=nodelay; -1=pay duly; 1=payment delay for one month; etc."
+X8_PAY_3 = "X6_PAY_0: The repayment status in July 2005 where 0=nodelay; -1=pay duly; 1=payment delay for one month; etc."
+X9_PAY_4 = "X6_PAY_0: The repayment status in June 2005 where 0=nodelay; -1=pay duly; 1=payment delay for one month; etc."
+X10_PAY_5 = "X6_PAY_0: The repayment status in May 2005 where 0=nodelay; -1=pay duly; 1=payment delay for one month; etc."
+X11_PAY_6 = "X6_PAY_0: The repayment status in April 2005 where 0=nodelay; -1=pay duly; 1=payment delay for one month; etc."
+X12_BILL_AMT1 = "X12_BILL_AMT1: Amount of bill statement (NT Dollar) in September, 2005"
+X13_BILL_AMT1 = "X13_BILL_AMT1: Amount of bill statement (NT Dollar) in August, 2005"
+X14_BILL_AMT1 = "X14_BILL_AMT1: Amount of bill statement (NT Dollar) in July, 2005"
+X15_BILL_AMT1 = "X15_BILL_AMT1: Amount of bill statement (NT Dollar) in June, 2005"
+X16_BILL_AMT1 = "X16_BILL_AMT1: Amount of bill statement (NT Dollar) in May, 2005"
+X17_BILL_AMT1 = "X17_BILL_AMT1: Amount of bill statement (NT Dollar) in April, 2005"
+X18_PAY_AMT1 = "X18_PAY_AMT1: Amount previously paid (NT Dollar) in September, 2005"
+X19_PAY_AMT1 = "X19_PAY_AMT1: Amount previously paid (NT Dollar) in August, 2005"
+X20_PAY_AMT1 = "X20_PAYL_AMT1: Amount previously paid (NT Dollar) in July, 2005"
+X21_PAY_AMT1 = "X21_PAY_AMT1: Amount previously paid (NT Dollar) in June, 2005"
+X22_PAY_AMT1 = "X22_PAY_AMT1: Amount previously paid (NT Dollar) in May, 2005"
+X23_PAY_AMT1 = "X23_PAY_AMT1: Amount previously paid (NT Dollar) in April, 2005"
+kable(c(ID, Y, X1_LIMIT_BAL, X2_SEX, X3_EDUCATION, X4_MARRAIGE, X5_AGE, X6_PAY_0, X7_PAY_2, X8_PAY_3, X9_PAY_4, X10_PAY_5, X11_PAY_6, X12_BILL_AMT1, X13_BILL_AMT1, X14_BILL_AMT1, X15_BILL_AMT1, X16_BILL_AMT1, X17_BILL_AMT1, X18_PAY_AMT1, X19_PAY_AMT1, X20_PAY_AMT1, X21_PAY_AMT1, X22_PAY_AMT1, X23_PAY_AMT1), caption = "Data set description", padding = 5)
+```
+##Importing Data
+```{r datatypedate, echo=T}
+myURL <- "https://raw.githubusercontent.com/MatthewALanham/HW2_lanhamm/master/creditCardDefaultData.csv"
+myData <- read.table(file= myURL, header=T, sep=",", colClasses=c("factor","factor","factor","numeric","character","numeric","numeric","factor" ))
+rm(myURL)
+setwd("HW2_ghoshp")
+class(myData)
+summary(myData)
+head(myData)
+myData
+dim(myData)
+str(myData)
+
+```
+##Problem 4
+```{r datatypedate, echo=T}
+#myFactors <- as.factor(c(rep("Y",2), rep("X2_SEX",3), rep("X4_MARRAIGE",1) ))
+myFactors1 <- as.factor(c("Y", "X2_SEX", "X4_MARRAIGE"))
+str(myFactors1)
+```
+##Problem 5
+```{r datatypedate, echo=T}
+myData$X3_EDUCATION[myData$X3_EDUCATION != c(1,2,3,4)] <- 4
+factor(x=myData$X3_EDUCATION, levels=c(1,2,3,4), ordered = TRUE)
+```
+##Problem 6:
+```{r datatypedate, echo=T}
+source("DataQualityReport.R")
+source("DataQualityReportOverall.R")
+DataQualityReport(myData)
+DataQualityReportOverall(myData)
+```
+##Problem 7:
+```{r datatypedate, echo=T}
+myData$X5_AGE[myData$X12_BILL_AMT1 == 964511]
+```
+#Problem 8:
+```{r datatypedate, echo=T}
+myDF=data.frame(myData$ID,myData$X3_EDUCATION,myData$X2_SEX)
+myDF
+var1=myDF[myDF$myData.X3_EDUCATION==1 ,  ]
+var1
+nrow(var1)
+var2=var1[var1$myData.X2_SEX==1, ]
+var2
+nrow(var2)
+```
+#Problem 9:
+```{r datatypedate, echo=T}
+myDataFrame=data.frame(myData$Y,myData$X5_AGE)
+average=mean(myData$X5_AGE)
+average
+g=myDataFrame[myDataFrame$myData.X5_AGE<avg, ]
+nrow(g)/nrow(myDataFrame)
+```
+##Problem 10:
+```{r datatypedate, echo=T}
+library(ggplot2)
+boxplot(myData$X1_LIMIT_BAL~myData$Y, main="Card Limit By Default",ylab="Credit Card Limit",col=c("red","sky blue"),bg="white",xlab="Default(Yes=1,No=0)")
+```
+###Multiplot
+```{r datatypedate, echo=T}
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  library(grid)
+
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+
+  numPlots = length(plots)
+
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                    ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+
+ if (numPlots==1) {
+    print(plots[[1]])
+
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+```
+##Problem 11:
+```{r datatypedate, echo=T}
+#creating a new field for credit balance in NT
+myData$creditcardbalance=myData$X12_BILL_AMT1+myData$X13_BILL_AMT1+myData$X14_BILL_AMT1+myData$X15_BILL_AMT1+myData$X16_BILL_AMT1+myData$X17_BILL_AMT1-myData$X18_PAY_AMT1-myData$X19_PAY_AMT-myData$X20_PAY_AMT-myData$X21_PAY_AMT-myData$X22_PAY_AMT-myData$X23_PAY_AMT
+#Creating a new field for credit balance in USD
+myData$creditbalanceusd=myData$creditcardbalance*0.0032
+#Creating distribution graphs
+library(ggplot2)
+
+
+# First plot
+p1<- ggplot(myData, aes(x=myData$creditcardbalance)) + geom_density(aes(group=myData$Y, colour="Blue"), alpha=0.3)+
+   ggtitle("Distribution of credit card balance in NT Dollars")
+
+# Second plot
+p2 <- ggplot(myData, aes(x=myData$creditcardbalanceusd)) + geom_density(aes(group=myData$Y, colour="Green"), alpha=0.3)+
+   ggtitle("Distribution of credit card balance in US Dollars")
+
+#Using multiplot function
+multiplot(p1,p2,col=2)
+
+```
+##Problem 12:
+```{r datatypedate, echo=T}
+#Uploading the file
+```
+##Importing Data
+```{r datatypedate, echo=T}
+myURL <- "https://raw.githubusercontent.com/MatthewALanham/HW2_lanhamm/master/creditCardDefaultData.csv"
+myData <- read.table(file= myURL, header=T, sep=",", colClasses=c("factor","factor","factor","numeric","character","numeric","numeric","factor" ))
+rm(myURL)
+setwd("HW2_ghoshp")
+class(myData)
+summary(myData)
+head(myData)
+myData
+dim(myData)
+str(myData)
+
+```
+##Problem 4
+```{r datatypedate, echo=T}
+#myFactors <- as.factor(c(rep("Y",2), rep("X2_SEX",3), rep("X4_MARRAIGE",1) ))
+myFactors1 <- as.factor(c("Y", "X2_SEX", "X4_MARRAIGE"))
+str(myFactors1)
+```
+##Problem 5
+```{r datatypedate, echo=T}
+myData$X3_EDUCATION[myData$X3_EDUCATION != c(1,2,3,4)] <- 4
+factor(x=myData$X3_EDUCATION, levels=c(1,2,3,4), ordered = TRUE)
+```
+##Problem 6:
+```{r datatypedate, echo=T}
+source("DataQualityReport.R")
+source("DataQualityReportOverall.R")
+DataQualityReport(myData)
+DataQualityReportOverall(myData)
+```
+##Problem 7:
+```{r datatypedate, echo=T}
+myData$X5_AGE[myData$X12_BILL_AMT1 == 964511]
+```
+#Problem 8:
+```{r datatypedate, echo=T}
+myDF=data.frame(myData$ID,myData$X3_EDUCATION,myData$X2_SEX)
+myDF
+var1=myDF[myDF$myData.X3_EDUCATION==1 ,  ]
+var1
+nrow(var1)
+var2=var1[var1$myData.X2_SEX==1, ]
+var2
+nrow(var2)
+```
+#Problem 9:
+```{r datatypedate, echo=T}
+myDataFrame=data.frame(myData$Y,myData$X5_AGE)
+average=mean(myData$X5_AGE)
+average
+g=myDataFrame[myDataFrame$myData.X5_AGE<avg, ]
+nrow(g)/nrow(myDataFrame)
+```
+##Problem 10:
+```{r datatypedate, echo=T}
+library(ggplot2)
+boxplot(myData$X1_LIMIT_BAL~myData$Y, main="Card Limit By Default",ylab="Credit Card Limit",col=c("red","sky blue"),bg="white",xlab="Default(Yes=1,No=0)")
+```
+###Multiplot
+```{r datatypedate, echo=T}
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  library(grid)
+
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+
+  numPlots = length(plots)
+
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                    ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+
+ if (numPlots==1) {
+    print(plots[[1]])
+
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+```
+##Problem 11:
+```{r datatypedate, echo=T}
+#creating a new field for credit balance in NT
+myData$creditcardbalance=myData$X12_BILL_AMT1+myData$X13_BILL_AMT1+myData$X14_BILL_AMT1+myData$X15_BILL_AMT1+myData$X16_BILL_AMT1+myData$X17_BILL_AMT1-myData$X18_PAY_AMT1-myData$X19_PAY_AMT-myData$X20_PAY_AMT-myData$X21_PAY_AMT-myData$X22_PAY_AMT-myData$X23_PAY_AMT
+#Creating a new field for credit balance in USD
+myData$creditbalanceusd=myData$creditcardbalance*0.0032
+#Creating distribution graphs
+library(ggplot2)
+
+
+# First plot
+p1<- ggplot(myData, aes(x=myData$creditcardbalance)) + geom_density(aes(group=myData$Y, colour="Blue"), alpha=0.3)+
+   ggtitle("Distribution of credit card balance in NT Dollars")
+
+# Second plot
+p2 <- ggplot(myData, aes(x=myData$creditcardbalanceusd)) + geom_density(aes(group=myData$Y, colour="Green"), alpha=0.3)+
+   ggtitle("Distribution of credit card balance in US Dollars")
+
+#Using multiplot function
+multiplot(p1,p2,col=2)
+
+```
+##Problem 12:
+```{r datatypedate, echo=T}
+#Uploading the file
+```
+##Extra Credit:
+```{r datatypedate, echo=T}
+par(mfrow=c(1,2))
+#library(dob)
+bill_sept = aggregate(myData$X12_BILL_AMT1 ~ myData$Y , myData, median)
+bill_aug = aggregate(myData$X13_BILL_AMT2 ~ myData$Y , myData, median)
+bill_july = aggregate(myData$X14_BILL_AMT3 ~ myData$Y , myData, median)
+bill_June = aggregate(myData$X15_BILL_AMT4 ~ myData$Y , myData, median)
+bill_may = aggregate(myData$X16_BILL_AMT5 ~ myData$Y , myData, median)
+bill_april = aggregate(myData$X17_BILL_AMT6 ~ myData$Y , myData, median)
+paid_sept = aggregate(myData$X18_PAY_AMT1 ~ myData$Y , myData, median)
+paid_aug = aggregate(myData$X19_PAY_AMT2 ~ myData$Y , myData, median)
+paid_july = aggregate(myData$X20_PAY_AMT3 ~ myData$Y , myData, median)
+paid_june = aggregate(myData$X21_PAY_AMT4 ~ myData$Y , myData, median)
+paid_may = aggregate(myData$X22_PAY_AMT5 ~ myData$Y , myData, median)
+paid_april = aggregate(myData$X23_PAY_AMT6 ~ myData$Y , myData, median)
+myData$months = c("April", "May", "June", "July", "August", "September")
+#Merging the datasets of Bill Amount
+merge1 = merge(x=bill_april, y=bill_may, by= "Y",all=TRUE)
+merge2 = merge(x=bill_june, y=bill_july, by= "Y",all=TRUE)
+merge3 = merge(x=bill_aug, y=bill_sept, by= "Y",all=TRUE)
+merge4 = merge(x=merge1, y=merge2, by= "Y", all=TRUE)
+merge5 = merge(x=merge4, y=merge3, by= "Y", all=TRUE)
+#reshaping the dataframes created
+library(reshape)
+mdata <- melt(merge5, id="Y")
+
+#Merging the datasets of Paid Amount
+merge11 = merge(x=paid_april, y=paid_may, by= "Y",all=TRUE)
+merge22 = merge(x=paid_june, y=paid_july, by= "Y",all=TRUE)
+merge33 = merge(x=paid_aug, y=paid_sept, by= "Y",all=TRUE)
+merge44 = merge(x=merge11, y=merge22, by= "Y", all=TRUE)
+merge55 = merge(x=merge44, y=merge33, by= "Y", all=TRUE)
+#reshaping the dataframes created
+library(reshape)
+mdata1 <- melt(merge55, id="Y")
+
+plot(myData$months, myData$mdata,        # x variable, y variable
+     col = myData$Y,                          # colour by species
+     main = "Median Amount of Bill Statements")      # plot title
+legend(x=4.5, y=7, legend = levels(myData$Y),col = (1:3), pch =16)
+plot(myData$months, myData$mdata1,         # x variable, y variable
+     col = myData$Y,                          # colour by species
+     main = "Median Amount of Previous Bill Paid")  # plot title
+legend(x=4.5, y=7, legend = levels(myData$Y),col = (1:3), pch =16)
+```
